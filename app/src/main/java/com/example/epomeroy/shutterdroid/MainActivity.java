@@ -2,15 +2,39 @@ package com.example.epomeroy.shutterdroid;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.epomeroy.shutterdroid.shutterstock.ShutterStock;
+import com.example.epomeroy.shutterdroid.shutterstock.ShutterStockService;
+import com.example.epomeroy.shutterdroid.shutterstock.ShutterStockWebServiceResponse;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = MainActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ShutterStockService service = ShutterStock.getService();
+        service.getRecentImages(new Callback<ShutterStockWebServiceResponse>() {
+            @Override
+            public void success(ShutterStockWebServiceResponse shutterStockWebServiceResponse, Response response) {
+                Log.d(TAG, shutterStockWebServiceResponse.getShutterDataList().get(0).getAssets().getImageThumbNail().getImageUrl());
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d(TAG, error.getMessage());
+            }
+        });
     }
 
     @Override
